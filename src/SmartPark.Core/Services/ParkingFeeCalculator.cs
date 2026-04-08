@@ -60,9 +60,21 @@ public class ParkingFeeCalculator
         bool isLostTicket = false,
         bool isHoliday = false)
     {
-        // TODO: Implement the 9-step fee calculation using TDD.
-        // Write a failing test first (RED), then implement just enough to pass (GREEN).
-        throw new NotImplementedException(
-            "Implement this method using TDD — see the assignment spec for the 9-step calculation flow.");
+    // Step 1: Validate
+    if (checkOut < checkIn)
+        throw new ArgumentException("checkOut cannot be before checkIn.");
+
+    var result = new ParkingFeeResult();
+
+    // Step 2: Grace period — ≤ 30 min → free
+    double totalMinutes = (checkOut - checkIn).TotalMinutes;
+
+    if (totalMinutes <= 30)
+    {
+        result.BaseFee  = 0m;
+        result.TotalFee = 0m;
+        return result;
     }
+    return result;
+}
 }

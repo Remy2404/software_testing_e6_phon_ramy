@@ -49,4 +49,15 @@ public class ParkingFeeCalculatorTests
         Assert.Equal(1000m, result.TotalFee); // 500 * 2 = 1000
         
     }
+    [Fact]
+    public void CalculateFee_MotorcycleDailyCap_10Hours_Returns4000(){
+         // Arrange — 10 hours: 500 × 10 = 5,000, but capped at 4,000
+        var checkIn = Mon(8 , 0);
+        var checkOut = Mon(18 , 0);
+
+        //act
+        var result = _calculator.CalculateFee(VehicleType.Motorcycle, MembershipTier.Guest , checkIn , checkOut);
+
+        Assert.Equal(4000m , result.TotalFee);
+    }
 }

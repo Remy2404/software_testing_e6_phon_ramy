@@ -60,4 +60,16 @@ public class ParkingFeeCalculatorTests
 
         Assert.Equal(4000m , result.TotalFee);
     }
+    [Fact]
+    public void CalculateFee_Weekend_Saturday_Adds20PercentSurcharge()
+    {
+        // Car, Saturday, 2h → base=2,000; +20% surcharge=400 → total=2,400
+        var checkIn  = Sat(10, 0);
+        var checkOut = Sat(12, 0);
+
+        var result = _calculator.CalculateFee(VehicleType.Car, MembershipTier.Guest, checkIn, checkOut);
+
+        Assert.Equal(2_400m, result.TotalFee);
+        Assert.Equal(400m,   result.SurchargeAmount);
+    }
 }

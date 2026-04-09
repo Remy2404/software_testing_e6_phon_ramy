@@ -81,26 +81,25 @@ public class ParkingFeeCalculator
     billableHours = Math.Max(1, billableHours);
 
     // Step 4: Base fee WITH daily cap
-    decimal hourlyRate = vehicleType switch
+    result.BaseFee  = Math.Min(billableHours * GetHourlyRate(vehicleType), GetDailyCap(vehicleType));
+    result.TotalFee = result.BaseFee;
+    return result;
+
+    }
+
+    private static decimal GetHourlyRate(VehicleType v) => v switch
     {
         VehicleType.Motorcycle => 500m,
         VehicleType.Car        => 1_000m,
         VehicleType.SUV        => 1_500m,
-        _                      => throw new ArgumentOutOfRangeException(nameof(vehicleType))
+        _                      => throw new ArgumentOutOfRangeException(nameof(v))
     };
 
-    decimal dailyCap = vehicleType switch
+    private static decimal GetDailyCap(VehicleType v) => v switch
     {
         VehicleType.Motorcycle => 4_000m,
         VehicleType.Car        => 8_000m,
         VehicleType.SUV        => 12_000m,
-        _                      => throw new ArgumentOutOfRangeException(nameof(vehicleType))
+        _                      => throw new ArgumentOutOfRangeException(nameof(v))
     };
-
-    result.BaseFee  = Math.Min(billableHours * hourlyRate, dailyCap);
-    result.TotalFee = result.BaseFee;
-    return result;
-
-
-}
-}
+}

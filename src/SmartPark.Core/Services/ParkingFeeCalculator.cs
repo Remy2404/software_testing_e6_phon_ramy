@@ -76,5 +76,23 @@ public class ParkingFeeCalculator
         return result;
     }
     return result;
+    // step 3 : Duration
+    int billableHours = (int)Math.Ceiling((totalMinutes - 30) / 60.0);
+    billableHours = Math.Max(1, billableHours);
+
+    // Step 4: Base fee (no cap yet)
+    decimal hourlyRate = vehicleType switch
+    {
+        VehicleType.Motorcycle => 500m,
+        VehicleType.Car        => 1_000m,
+        VehicleType.SUV        => 1_500m,
+        _                      => throw new ArgumentOutOfRangeException(nameof(vehicleType))
+    };
+
+    result.BaseFee  = billableHours * hourlyRate;
+    result.TotalFee = result.BaseFee;
+    return result;
+
+
 }
 }

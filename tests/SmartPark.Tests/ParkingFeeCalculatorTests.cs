@@ -72,4 +72,15 @@ public class ParkingFeeCalculatorTests
         Assert.Equal(2_400m, result.TotalFee);
         Assert.Equal(400m,   result.SurchargeAmount);
     }
+    [Fact]
+    public void CalculateFee_GoldMember_Car2Hours_Returns1500()
+    {
+        // base=2,000; Gold 25% → discount=500; total=1,500
+        var checkIn  = Mon(10, 0);
+        var checkOut = Mon(12, 0);
+
+        var result = _calculator.CalculateFee(VehicleType.Car, MembershipTier.Gold, checkIn, checkOut);
+
+        Assert.Equal(1_500m, result.TotalFee);
+    }
 }

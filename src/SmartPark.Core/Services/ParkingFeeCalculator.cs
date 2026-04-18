@@ -89,6 +89,18 @@ public class ParkingFeeCalculator
         surchargeRate = 0.20m;
     result.SurchargeAmount = result.BaseFee * surchargeRate;
     result.TotalFee = result.BaseFee + result.SurchargeAmount;
+    // Step 7: Membership discount — applies to (baseFee + surcharge)
+    decimal discountRate = membership switch
+    {
+        MembershipTier.Guest    => 0m,
+        MembershipTier.Silver   => 0.10m,
+        MembershipTier.Gold     => 0.25m,
+        MembershipTier.Platinum => 0.40m,
+        _                       => throw new ArgumentOutOfRangeException(nameof(membership))
+    };
+
+    result.DiscountAmount = (result.BaseFee + result.SurchargeAmount) * discountRate;
+    result.TotalFee       = result.BaseFee + result.SurchargeAmount - result.DiscountAmount;
     return result;
     }
 

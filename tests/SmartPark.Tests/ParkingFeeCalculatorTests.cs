@@ -83,4 +83,17 @@ public class ParkingFeeCalculatorTests
 
         Assert.Equal(1_500m, result.TotalFee);
     }
+    [Fact]
+    public void CalculateFee_LostTicket_AddsExact20000Penalty()
+    {
+        // Car, 2h, lost → 2,000 fee + 20,000 penalty = 22,000
+        var checkIn  = Mon(10, 0);
+        var checkOut = Mon(12, 0);
+
+        var result = _calculator.CalculateFee(
+            VehicleType.Car, MembershipTier.Guest, checkIn, checkOut, isLostTicket: true);
+
+        Assert.Equal(22_000m, result.TotalFee);
+        Assert.Equal(20_000m, result.LostTicketPenalty);
+    }
 }

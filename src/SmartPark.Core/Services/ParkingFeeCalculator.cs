@@ -83,8 +83,13 @@ public class ParkingFeeCalculator
     // Step 4: Base fee WITH daily cap
     result.BaseFee  = Math.Min(billableHours * GetHourlyRate(vehicleType), GetDailyCap(vehicleType));
     result.TotalFee = result.BaseFee;
+    // Step 6: Surcharge — holiday overrides weekend, no stacking
+    decimal surchargeRate = 0m;
+    if (checkIn.DayOfWeek == DayOfWeek.Saturday || checkIn.DayOfWeek == DayOfWeek.Sunday)
+        surchargeRate = 0.20m;
+    result.SurchargeAmount = result.BaseFee * surchargeRate;
+    result.TotalFee = result.BaseFee + result.SurchargeAmount;
     return result;
-
     }
 
     private static decimal GetHourlyRate(VehicleType v) => v switch
@@ -102,4 +107,4 @@ public class ParkingFeeCalculator
         VehicleType.SUV        => 12_000m,
         _                      => throw new ArgumentOutOfRangeException(nameof(v))
     };
-}
+}

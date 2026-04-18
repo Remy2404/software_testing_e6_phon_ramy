@@ -41,8 +41,8 @@ public class ParkingFeeCalculatorTests
     [Fact]
     public void CalculateFee_Motorcycle_2Hours_Returns1000() {
         // Arrange
-        var checkIn = Sat(10, 0);
-        var checkOut = Sat(12, 0);
+        var checkIn = Mon(10, 0);
+        var checkOut = Mon(12, 0);
         // Act
         var result = _calculator.CalculateFee(VehicleType.Motorcycle, MembershipTier.Guest, checkIn, checkOut);
         // Assert

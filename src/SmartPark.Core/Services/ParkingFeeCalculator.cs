@@ -37,6 +37,13 @@ public class ParkingFeeCalculator
     // Penalties
     private const decimal LostTicketPenalty = 20_000m;
 
+    private static bool SpansPast10Pm(DateTime checkIn, DateTime checkOut)
+    {
+        if (checkIn.Hour >= 22) return true;
+        var threshold = new DateTime(checkIn.Year, checkIn.Month, checkIn.Day, 22, 0, 0);
+        return checkOut > threshold;
+    }
+
     /// <summary>
     /// Calculates the parking fee following the 9-step flow in the spec.
     /// </summary>
@@ -84,6 +91,10 @@ public class ParkingFeeCalculator
     // Step 4: Base fee WITH daily cap
     result.BaseFee  = Math.Min(billableHours * GetHourlyRate(vehicleType), GetDailyCap(vehicleType));
     result.TotalFee = result.BaseFee;
+
+    // Step 5: Overnight fee
+    decimal overnightFee = SpansPast10Pm(checkIn, checkOut) ? 2_000m : 0m;
+
     // Step 6: Surcharge — holiday overrides weekend, no stacking
     decimal surchargeRate = 0m;
     if (checkIn.DayOfWeek == DayOfWeek.Saturday || checkIn.DayOfWeek == DayOfWeek.Sunday)
@@ -108,7 +119,11 @@ public class ParkingFeeCalculator
 
     // Step 9: Final total — never negative
     result.TotalFee = Math.Max(0m,
-        result.BaseFee + result.SurchargeAmount - result.DiscountAmount + result.LostTicketPenalty);
+        result.BaseFee
+        + result.SurchargeAmount
+        - result.DiscountAmount
+        + overnightFee
+        + result.LostTicketPenalty);
     return result;
     }
 

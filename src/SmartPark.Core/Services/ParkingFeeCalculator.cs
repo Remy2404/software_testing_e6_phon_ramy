@@ -71,8 +71,9 @@ public class ParkingFeeCalculator
 
     if (totalMinutes <= 30)
     {
-        result.BaseFee  = 0m;
-        result.TotalFee = 0m;
+        result.BaseFee           = 0m;
+        result.LostTicketPenalty = isLostTicket ? 20_000m : 0m;
+        result.TotalFee          = result.LostTicketPenalty;
         return result;
     }
 
@@ -101,6 +102,13 @@ public class ParkingFeeCalculator
 
     result.DiscountAmount = (result.BaseFee + result.SurchargeAmount) * discountRate;
     result.TotalFee       = result.BaseFee + result.SurchargeAmount - result.DiscountAmount;
+
+     // Step 8: Lost ticket penalty — NOT discounted
+    result.LostTicketPenalty = isLostTicket ? 20_000m : 0m;
+
+    // Step 9: Final total — never negative
+    result.TotalFee = Math.Max(0m,
+        result.BaseFee + result.SurchargeAmount - result.DiscountAmount + result.LostTicketPenalty);
     return result;
     }
 

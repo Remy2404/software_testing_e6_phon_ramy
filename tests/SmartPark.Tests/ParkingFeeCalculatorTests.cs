@@ -96,4 +96,15 @@ public class ParkingFeeCalculatorTests
         Assert.Equal(22_000m, result.TotalFee);
         Assert.Equal(20_000m, result.LostTicketPenalty);
     }
+    [Fact]
+    public void CalculateFee_Overnight_SpansPast10PM_AddsOvernightFee()
+    {
+        // Car: 8PM → 11PM (3h) = 3,000 base + 2,000 overnight = 5,000
+        var checkIn  = Mon(20, 0);
+        var checkOut = Mon(23, 0);
+
+        var result = _calculator.CalculateFee(VehicleType.Car, MembershipTier.Guest, checkIn, checkOut);
+
+        Assert.Equal(5_000m, result.TotalFee);
+    }
 }

@@ -102,16 +102,7 @@ public class ParkingFeeCalculator
     result.SurchargeAmount = result.BaseFee * surchargeRate;
     result.TotalFee = result.BaseFee + result.SurchargeAmount;
     // Step 7: Membership discount — applies to (baseFee + surcharge)
-    decimal discountRate = membership switch
-    {
-        MembershipTier.Guest    => 0m,
-        MembershipTier.Silver   => 0.10m,
-        MembershipTier.Gold     => 0.25m,
-        MembershipTier.Platinum => 0.40m,
-        _                       => throw new ArgumentOutOfRangeException(nameof(membership))
-    };
-
-    result.DiscountAmount = (result.BaseFee + result.SurchargeAmount) * discountRate;
+    result.DiscountAmount = (result.BaseFee + result.SurchargeAmount) * GetDiscountRate(membership);
     result.TotalFee       = result.BaseFee + result.SurchargeAmount - result.DiscountAmount;
 
      // Step 8: Lost ticket penalty — NOT discounted
@@ -141,5 +132,14 @@ public class ParkingFeeCalculator
         VehicleType.Car        => 8_000m,
         VehicleType.SUV        => 12_000m,
         _                      => throw new ArgumentOutOfRangeException(nameof(v))
+    };
+
+    private static decimal GetDiscountRate(MembershipTier m) => m switch
+    {
+        MembershipTier.Guest    => 0m,
+        MembershipTier.Silver   => 0.10m,
+        MembershipTier.Gold     => 0.25m,
+        MembershipTier.Platinum => 0.40m,
+        _                       => throw new ArgumentOutOfRangeException(nameof(m))
     };
 }

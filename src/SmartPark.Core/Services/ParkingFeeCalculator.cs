@@ -97,7 +97,9 @@ public class ParkingFeeCalculator
 
     // Step 6: Surcharge — holiday overrides weekend, no stacking
     decimal surchargeRate = 0m;
-    if (checkIn.DayOfWeek == DayOfWeek.Saturday || checkIn.DayOfWeek == DayOfWeek.Sunday)
+    if (isHoliday)
+        surchargeRate = 0.50m;
+    else if (checkIn.DayOfWeek == DayOfWeek.Saturday || checkIn.DayOfWeek == DayOfWeek.Sunday)
         surchargeRate = 0.20m;
     result.SurchargeAmount = result.BaseFee * surchargeRate;
     result.TotalFee = result.BaseFee + result.SurchargeAmount;
